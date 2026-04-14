@@ -32,5 +32,5 @@ Name,Purpose,Quantity,Total Cost (USD),Link,Distributor
 "TAJA106K016RNJ","Capacitor for a voltage converter 10uF",1,0.25,"https://www.lcsc.com/product-detail/C7171.html?s_z=n_TAJA106K016RNJ%2520","LCSC"
 "25TQC22MYFB","Capacitor for a voltage converter 22uF",1,0.80,"https://www.lcsc.com/product-detail/C3018703.html","LCSC"
 "AMS1117-3.3","Voltage Converter for ESP32",1,0.45,"https://www.lcsc.com/product-detail/C347222.html?s_z=n_AMS1117","LCSC"
-"Shipping","Total shipping cost", ,25.75, ,"JLCPCB,LCSC,Reproobchod.cz"
-"Tax","Total tax cost", ,6.57, ,"JLCPCB,LCSC"
+"Shipping","Total shipping cost", ,25.75, ,"JLCPCB, LCSC, Reproobchod.cz"
+"Tax","Total tax cost", ,6.57, ,"JLCPCB, LCSC"
