@@ -29,51 +29,10 @@ wifi:
     password: "K8SjwEbvER5X"
 
 captive_portal:
-
-micro_wake_word:
-  id: mww
-  models:
-    - model: hey_jarvis
-
-
-voice_assistant:
-  id: va
-  microphone: my_mic
-  speaker: my_speaker
   
-
-  use_wake_word: true
-  micro_wake_word: mww 
-
-  
-  on_wake_word_detected:
-    - light.turn_on:
-        id: led_strip
-        blue: 100%
-        effect: "Pulse"
-  on_listening:
-    - light.turn_on:
-        id: led_strip
-        blue: 100%
-        effect: "Pulse"
-  on_stt_end:
-    - light.turn_on:
-        id: led_strip
-        green: 100%
-        effect: "None"
-  on_tts_start:
-    - light.turn_on:
-        id: led_strip
-        white: 100%
-        brightness: 50%
-  on_tts_end:
-    - light.turn_off: led_strip
-  on_error:
-    - light.turn_on:
-        id: led_strip
-        red: 100%
-    - delay: 2s
-    - light.turn_off: led_strip
+psram:
+  mode: octal
+  speed: 80MHz
 
 # Defining two independent I2S buses
 i2s_audio:
@@ -93,6 +52,8 @@ microphone:
     i2s_din_pin: GPIO7
     adc_type: external
     pdm: false
+    channel: left
+    bits_per_sample: 32bit
 
 # MAX98357A Amplifier
 speaker:
@@ -101,6 +62,106 @@ speaker:
     i2s_audio_id: i2s_out
     i2s_dout_pin: GPIO17
     dac_type: external
+    sample_rate: 48000
+    bits_per_sample: 32bit
+    channel: mono
+
+  - platform: mixer
+    id: mixing_speaker
+    output_speaker: my_speaker
+    num_channels: 2
+    source_speakers:
+      - id: announcement_mixing_input
+        timeout: never
+      - id: media_mixing_input
+        timeout: never
+
+  - platform: resampler
+    id: announcement_resampling_speaker
+    output_speaker: announcement_mixing_input
+    sample_rate: 48000
+    bits_per_sample: 16
+  - platform: resampler
+    id: media_resampling_speaker
+    output_speaker: media_mixing_input
+    sample_rate: 48000
+    bits_per_sample: 16
+
+# Media Player
+media_player:
+  - platform: speaker
+    name: "Assistant Speaker"
+    id: assistant_media_player
+    announcement_pipeline:
+      speaker: announcement_resampling_speaker
+      format: FLAC     
+      num_channels: 1 
+      sample_rate: 48000
+    media_pipeline:
+      speaker: media_resampling_speaker
+      format: FLAC
+      num_channels: 2
+      sample_rate: 48000
+
+micro_wake_word:
+  microphone: my_mic
+  stop_after_detection: false
+  vad:
+  models:
+    - model: hey_jarvis
+      id: hey_jarvis
+    - model: okay_nabu
+      id: okay_nabu
+  id: mww
+  on_wake_word_detected:
+    - light.turn_on:
+        id: led_strip
+        red: 0%
+        green: 0%
+        blue: 100%
+        effect: "Pulse"
+    - voice_assistant.start:
+        wake_word: !lambda return wake_word;
+
+voice_assistant:
+  id: va
+  microphone: my_mic
+  media_player: assistant_media_player
+  micro_wake_word: mww
+  use_wake_word: false
+  
+  on_listening:
+    - light.turn_on:
+        id: led_strip
+        red: 0%
+        green: 0%
+        blue: 100%
+        effect: "Pulse"
+  on_stt_end:
+    - light.turn_on:
+        id: led_strip
+        red: 0%
+        green: 100%
+        blue: 0%
+        effect: "None"
+  on_tts_start:
+    - light.turn_on:
+        id: led_strip
+        red: 100%
+        green: 100%
+        blue: 100%
+        brightness: 50%
+  on_tts_end:
+    - light.turn_off: led_strip
+  on_error:
+    - light.turn_on:
+        id: led_strip
+        red: 100%
+        green: 0%
+        blue: 0%
+        effect: "None"
+    - delay: 2s
+    - light.turn_off: led_strip
 
 # LED strip
 light:
@@ -114,17 +175,49 @@ light:
     effects:
       - pulse:
           name: "Pulse"
+      - addressable_rainbow:
+          name: "Rainbow"
     
-# Capacitive button (mute button)
-esp32_touch:
-  setup_mode: false
-
 binary_sensor:
-  - platform: esp32_touch
-    name: "Assistant Touch Button"
+  - platform: gpio
+    name: "Touch Button"
     pin: GPIO1
-    threshold: 500
     on_press:
-      - voice_assistant.start:
-    on_release:
+      - switch.toggle: mute_switch
+
+# Mute button
+switch:
+  - platform: template
+    name: "Mute the assistant"
+    id: mute_switch
+    optimistic: true
+    icon: "mdi:microphone-off"
+    turn_on_action:
       - voice_assistant.stop:
+      - micro_wake_word.stop: 
+      - light.turn_on:
+          id: led_strip
+          red: 100%
+          green: 0%
+          blue: 0%
+          brightness: 15%
+          effect: "None"
+    turn_off_action:
+      - micro_wake_word.start: 
+      - light.turn_off: led_strip
+
+# Volume slider
+number:
+  - platform: template
+    name: "Assistant Volume"
+    id: volume_control
+    icon: "mdi:volume-high"
+    min_value: 0
+    max_value: 100
+    step: 5
+    initial_value: 50
+    optimistic: true
+    on_value:
+      - speaker.volume_set:
+         id: my_speaker
+         volume: !lambda "return x / 100.0;"
