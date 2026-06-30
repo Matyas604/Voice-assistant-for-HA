@@ -16,7 +16,7 @@ If not, check the logs and try searching online.
   <img src="Assets/ESP connected.png" alt="ESP connected" width="500">
 </p>
 
-An encryption key is required to connect to HA properly. It is in the code, or, if it hasn't been changed, it is "R2iV3Cuc+P9gXfcOKZiR/pYnqE1fDyUBjXqoBMwdVm4=". 
+An encryption key is required to connect to HA properly. It is in the code, or, if it hasn't been changed, it is "```R2iV3Cuc+P9gXfcOKZiR/pYnqE1fDyUBjXqoBMwdVm4=```". 
 After successfully connecting and setting up HA, you still need to configure the "Assistant pipeline" for STT conversion and TTS.
 
 ## How to Set Up the Assistant Pipeline:
