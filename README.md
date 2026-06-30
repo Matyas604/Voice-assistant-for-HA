@@ -10,14 +10,23 @@ I really enjoyed working on this project because I learned a lot of new things. 
 ## Features
 - Power and programming are handled via the **USB-C** port on the back
 - The [ESP32-S3](https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1183/ESP32-S3-WROOM-1U-N16R8.pdf) is the brain of the entire voice assistant
-- It uses [Gemini AI](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versions), [Gemini TTS](https://docs.cloud.google.com/text-to-speech/docs/gemini-tts), and [Gemini STT](https://docs.cloud.google.com/speech-to-text/docs), so it can speak and understand many languages
+- It uses **Groq AI**, **GroqTTS**, and **Groq STT**, so it can speak and understand many languages
 - It's not just a voice assistant for commands, but also a great AI assistant
 - It has internet access, so it can search for information and use it to provide answers
 - Everything is accompanied by a light response, so you know exactly what's going on
 - It's also a great music player because it features a high-quality [DAYTON DMA45-4](https://www.reproobchod.cz/user/related_files/dma45-4.pdf) speaker
 - It has a touch button to mute the assistant hidden in the top cover.
 
-⚠️It is important to have Home Assistant set up and Gemini API, the free API version will work too! You can find instructions on how to connect Gemini to Home Assistant online. Once the project is fully complete, I’ll publish detailed instructions on how to set it all up!
+
+<p align="center">
+  <img src="Assets/Build.jpg" alt="PCB schematic" width="600">
+</p>
+
+⚠️As you can see, the project is fully functional, but it’s missing the case because I had a few issues with the printer in printing legion and it didn’t arrive in time for the deadline. That’s why I’m submitting it to the build review like this for now, but as soon as the case arrives, I’ll document it again. Thank you
+
+I really enjoyed designing and then building this project, especially because it works absolutely great. There was one error in the PCB (it’s already been corrected in the schematic and files), but fortunately it wasn’t a huge one and was easy to fix. This was actually my first project to include SMD components, and I soldered it by hand. The hardest part was soldering the amplifier chip, but luckily I managed to do it in the end!
+
+Now, here's how it works: Once it's set up correctly, all you have to do is say "Hey Jarvis" and give your command or ask your question, and it will respond immediately or perform the action you requested. Here are the complete instructions on how to set it up.
 
 ## CAD model
 Everything is housed in a box consisting of 5 parts (front panel, rear panel, top panel, body, and a tube connecting the outside to the inside chamber). The touch button is hidden in the top panel, so it can be activated by touch and is not visible from the outside. The interior space behind the speaker must be completely airtight at the front to function properly; it is connected to the outside only by a tube at the back. It is also a good idea to place a piece of cotton wool inside for better sound quality. The PCB is located separately from the space around the speaker; it is secured with M3 screws, just like the rear panel, while the top panel is held in place by magnets. 
@@ -47,7 +56,7 @@ Everything is housed in a box consisting of 5 parts (front panel, rear panel, to
 </p>
 
 ## Firmware
-This voice assistant uses [ESPHome](https://esphome.io/) firmware. It is programmed via the USB-C port. It is activated by saying "Hey Jarvis" and sends a recording of the command to the [Home Assistant](https://www.home-assistant.io/), where it is converted to text using [Gemini STT](https://docs.cloud.google.com/speech-to-text/docs), then converted into a response using [Gemini AI](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versions), and then converted into a voice response using [Gemini TTS](https://docs.cloud.google.com/text-to-speech/docs/gemini-tts), the action is performed, and the response is spoken. You need to have the voice assistant pipeline set up correctly in Home Assistant! Once I've finished the project, I'll write a guide on how to get it up and running!
+This voice assistant uses [ESPHome](https://esphome.io/) firmware. It is programmed via the USB-C port. It is activated by saying "Hey Jarvis" and sends a recording of the command to the [Home Assistant](https://www.home-assistant.io/), where it is converted to text using **Groq STT**, then converted into a response using **Groq AI**, and then converted into a voice response using **Groq TTS**, the action is performed, and the response is spoken. You need to have the voice assistant pipeline set up correctly in Home Assistant tutorial here!
 
 ## BOM
 You can find it in .csv format [here](https://github.com/Matyas604/Voice-assistant-for-HA/blob/main/BOM.csv). 
